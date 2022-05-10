@@ -38,7 +38,7 @@ if os.path.isfile(logFileName):
     os.remove(logFileName)
 
 try:
-    saveFrames = sys.argv[3]
+    saveFrames = sys.argv[2]
     if saveFrames.lower() in ("yes", "y", "output", "o", "true", "t"):
         saveFrames = True
     else:
