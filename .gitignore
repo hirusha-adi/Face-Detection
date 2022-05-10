@@ -1,3 +1,5 @@
 
-esex.log
-esex.mp4
+*.log
+*.mp4
+*.jpg
+*.xml
