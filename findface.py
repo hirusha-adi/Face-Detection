@@ -6,15 +6,6 @@ import coloredlogs
 import datetime as dt
 from time import sleep
 
-
-def _createCascade():
-    pass
-
-
-cascPath = os.path.join(os.getcwd(), "Face-Detection-TEMP-Cascasde.xml")
-if not(os.path.isfile(cascPath)):
-    _createCascade()
-
 try:
     videoFileName = sys.argv[1]
 except IndexError:
@@ -31,15 +22,26 @@ logFileName = f'Face-Detection-{videoFileName.split(".")[-2].split("/")[-1]}.log
 if os.path.isfile(logFileName):
     os.remove(logFileName)
 
-faceCascade = cv2.CascadeClassifier(cascPath)
-
 logger = logging.basicConfig(
     level=logging.INFO,
     handlers=[
         logging.FileHandler(logFileName),
         logging.StreamHandler()
-    ]
+    ],
 )
+coloredlogs.install(level=logging.INFO, logger=logger)
+
+
+def _createCascade():
+    pass
+
+
+cascPath = os.path.join(os.getcwd(), "Face-Detection-TEMP-Cascasde.xml")
+if not(os.path.isfile(cascPath)):
+    _createCascade()
+
+
+faceCascade = cv2.CascadeClassifier(cascPath)
 
 video_capture = cv2.VideoCapture(videoFileName)
 anterior = 0
@@ -68,8 +70,7 @@ while True:
     if anterior != len(faces):
         anterior = len(faces)
         if len(faces) > 0:
-            logging.info("faces: "+str(len(faces)) +
-                         " at "+str(dt.datetime.now()))
+            logging.info(f'{len(faces)}')
             cv2.imwrite(f'extracted/{fc}.jpg', frame)
             fc += 1
 
