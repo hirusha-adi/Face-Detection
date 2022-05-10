@@ -10,6 +10,27 @@ try:
 except IndexError:
     videoFileName = os.path.join(os.getcwd(), "video.mp4")
 
+if videoFileName.lower() == "help":
+    print("""
+Easy Video Detection - vdetect
+
+Usage -
+    vdetect <video> <cascade> <save>
+
+Arguments -
+    <video>
+        Video name/path. Any format that is supported by opencv-python by default
+    
+    <cascade>
+        any opencv cascade to be used for the video
+    
+    <save>: "yes" | "no"
+        save frames to a folder or not
+
+Example -
+    vdetect video.mp4 haarcascade_frontalface_default.xml
+""")
+    sys.exit()
 
 if not(os.path.isfile(videoFileName)):
     all_mp4_files_cwd = [x for x in os.listdir(
@@ -18,7 +39,7 @@ if not(os.path.isfile(videoFileName)):
         videoFileName = all_mp4_files_cwd[0]
 
 videoFileNameOnly = videoFileName.split(".")[-2].split("/")[-1]
-logFileName = f'Face-Detection-{videoFileNameOnly}.log'
+logFileName = f'{videoFileNameOnly}.log'
 if os.path.isfile(logFileName):
     os.remove(logFileName)
 
@@ -31,20 +52,41 @@ logger = logging.basicConfig(
 )
 coloredlogs.install(level=logging.DEBUG, logger=logger)
 
-outputFramesFolder = os.path.join(os.getcwd(), "faces")
-if not(os.path.isdir(outputFramesFolder)):
-    logging.debug("created ./faces directory")
-    os.makedirs(outputFramesFolder)
-logging.info("images will be saved to ./faces directory")
+try:
+    saveFrames = sys.argv[3]
+    if saveFrames.lower() in ("yes", "y", "output", "o", "true", "t"):
+        saveFrames = True
+    else:
+        saveFrames = False
+except IndexError:
+    saveFrames = False
 
+if saveFrames:
+    outputFramesFolder = os.path.join(os.getcwd(), videoFileNameOnly)
+    if not(os.path.isdir(outputFramesFolder)):
+        logging.debug(f"created ./{videoFileNameOnly} directory")
+        os.makedirs(outputFramesFolder)
+    logging.info(f"images will be saved to ./{videoFileNameOnly} directory")
 
-cascPath = os.path.join(os.getcwd(), "Face-Detection-TEMP-Cascasde.xml")
+try:
+    cascPath = sys.argv[2]
+except IndexError:
+    all_xml_files_cwd = [x for x in os.listdir(
+        os.getcwd()) if x.endswith(".xml")]
+    if len(all_xml_files_cwd) == 1:
+        cascPath = all_xml_files_cwd[0]
+    else:
+        cascPath = "haarcascade_frontalface_default.xml"
+
 if not(os.path.isfile(cascPath)):
-    logging.error(f"Cascade file not found at {cascPath}")
-    sleep(3)
+    if cascPath == "haarcascade_frontalface_default.xml":
+        logging.error(f"Cascade file is not give. Please refer help.")
+    else:
+        logging.error(f"Cascade file not found at {cascPath}")
+    sleep(2)
     sys.exit()
 
-faceCascade = cv2.CascadeClassifier(cascPath)
+customCascade = cv2.CascadeClassifier(cascPath)
 video_capture = cv2.VideoCapture(videoFileName)
 anterior = 0
 fc = 1
@@ -60,22 +102,23 @@ while True:
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    faces = faceCascade.detectMultiScale(
+    object = customCascade.detectMultiScale(
         gray,
         scaleFactor=1.1,
         minNeighbors=5,
         minSize=(30, 30)
     )
 
-    for (x, y, w, h) in faces:
+    for (x, y, w, h) in object:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-    if anterior != len(faces):
-        anterior = len(faces)
-        if len(faces) > 0:
-            logging.info(f'found {len(faces)} face at frame {no}')
-            cv2.imwrite(f'{outputFramesFolder}/{fc}.jpg', frame)
-            fc += len(faces)
+    if anterior != len(object):
+        anterior = len(object)
+        if len(object) > 0:
+            logging.info(f'found {len(object)} item at frame {no}')
+            if saveFrames:
+                cv2.imwrite(f'{outputFramesFolder}/{fc}.jpg', frame)
+            fc += len(object)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
