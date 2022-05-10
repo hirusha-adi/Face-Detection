@@ -10,7 +10,6 @@ try:
 except IndexError:
     videoFileName = os.path.join(os.getcwd(), "video.mp4")
 
-
 if not(os.path.isfile(videoFileName)):
     all_mp4_files_cwd = [x for x in os.listdir(
         os.getcwd()) if x.endswith(".mp4")]
@@ -22,6 +21,15 @@ logFileName = f'Face-Detection-{videoFileNameOnly}.log'
 if os.path.isfile(logFileName):
     os.remove(logFileName)
 
+try:
+    saveFrames = sys.argv[3]
+    if saveFrames.lower() in ("yes", "y", "output", "o", "true", "t"):
+        saveFrames = True
+    else:
+        saveFrames = False
+except IndexError:
+    saveFrames = False
+
 logger = logging.basicConfig(
     level=logging.DEBUG,
     handlers=[
@@ -31,11 +39,12 @@ logger = logging.basicConfig(
 )
 coloredlogs.install(level=logging.DEBUG, logger=logger)
 
-outputFramesFolder = os.path.join(os.getcwd(), "faces")
-if not(os.path.isdir(outputFramesFolder)):
-    logging.debug("created ./faces directory")
-    os.makedirs(outputFramesFolder)
-logging.info("images will be saved to ./faces directory")
+if saveFrames:
+    outputFramesFolder = os.path.join(os.getcwd(), "faces")
+    if not(os.path.isdir(outputFramesFolder)):
+        logging.debug("created ./faces directory")
+        os.makedirs(outputFramesFolder)
+    logging.info("images will be saved to ./faces directory")
 
 
 def _createCascade(filename):
@@ -33393,7 +33402,8 @@ while True:
         anterior = len(faces)
         if len(faces) > 0:
             logging.info(f'found {len(faces)} face at frame {no}')
-            cv2.imwrite(f'{outputFramesFolder}/{fc}.jpg', frame)
+            if saveFrames:
+                cv2.imwrite(f'{outputFramesFolder}/{fc}.jpg', frame)
             fc += len(faces)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
