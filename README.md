@@ -12,7 +12,7 @@ This is a tool made to be used with any video, with any cascade. You can run/tes
 sudo apt update
 sudo apt install wget python3 python3-pip -y
 python3 -m pip install -U opencv-python coloredlogs
-wget "https://raw.githubusercontent.com/hirusha-adi/Face-Detection/main/vdetect.py"
+wget "https://raw.githubusercontent.com/hirusha-adi/OpenCV-Video-Tools/main/vdetect.py"
 chmod +x vdetect.py
 sudo mv vdetect.py /usr/local/bin/vdetect
 vdetect help
@@ -50,7 +50,7 @@ This is a tool built to identify faces of any given video with using the default
 sudo apt update
 sudo apt install wget python3 python3-pip -y
 python3 -m pip install -U opencv-python coloredlogs
-wget "https://raw.githubusercontent.com/hirusha-adi/Face-Detection/main/findface.py"
+wget "https://raw.githubusercontent.com/hirusha-adi/OpenCV-Video-Tools/main/findface.py"
 chmod +x findface.py
 sudo mv findface.py /usr/local/bin/findface
 findface help
