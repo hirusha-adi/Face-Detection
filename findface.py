@@ -23,7 +23,6 @@ Arguments -
 
 Example -
     findface videoName.mp4
-
   """)
     sys.exit()
 
