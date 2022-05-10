@@ -10,6 +10,23 @@ try:
 except IndexError:
     videoFileName = os.path.join(os.getcwd(), "video.mp4")
 
+if videoFileName == "help":
+    print("""
+Face Detection - findface
+
+Usage -
+    findface <video>
+
+Arguments -
+    <video> -
+        Video name/path. Any format that is supported by opencv-python by default
+
+Example -
+    findface videoName.mp4
+
+  """)
+    sys.exit()
+
 if not(os.path.isfile(videoFileName)):
     all_mp4_files_cwd = [x for x in os.listdir(
         os.getcwd()) if x.endswith(".mp4")]
