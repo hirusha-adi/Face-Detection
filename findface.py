@@ -3,7 +3,6 @@ import sys
 import os
 import logging
 import coloredlogs
-import datetime as dt
 from time import sleep
 
 try:
