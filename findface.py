@@ -18,7 +18,8 @@ if not(os.path.isfile(cascPath)):
 try:
     videoFileName = sys.argv[1]
 except IndexError:
-    videoFileName = "video.mp4"
+    videoFileName = os.path.join(os.getcwd(), "video.mp4")
+
 
 if not(os.path.isfile(videoFileName)):
     all_mp4_files_cwd = [x for x in os.listdir(
@@ -26,13 +27,16 @@ if not(os.path.isfile(videoFileName)):
     if len(all_mp4_files_cwd) == 1:
         videoFileName = all_mp4_files_cwd[0]
 
+logFileName = f'Face-Detection-{videoFileName.split(".")[-2].split("/")[-1]}.log'
+if os.path.isfile(logFileName):
+    os.remove(logFileName)
+
 faceCascade = cv2.CascadeClassifier(cascPath)
 
-logging.basicConfig(
+logger = logging.basicConfig(
     level=logging.INFO,
     handlers=[
-        logging.FileHandler(
-            f'Face-Detection-{videoFileName.split(".")[-2]}.log'),
+        logging.FileHandler(logFileName),
         logging.StreamHandler()
     ]
 )
@@ -47,7 +51,6 @@ while True:
         sleep(5)
         pass
 
-    # Capture frame-by-frame
     ret, frame = video_capture.read()
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
