@@ -17,7 +17,7 @@ if not(os.path.isfile(videoFileName)):
         videoFileName = all_mp4_files_cwd[0]
 
 videoFileNameOnly = videoFileName.split(".")[-2].split("/")[-1]
-logFileName = f'Face-Detection-{videoFileNameOnly}.log'
+logFileName = f'Faces-{videoFileNameOnly}.log'
 if os.path.isfile(logFileName):
     os.remove(logFileName)
 
