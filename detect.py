@@ -115,7 +115,7 @@ while True:
     if anterior != len(object):
         anterior = len(object)
         if len(object) > 0:
-            logging.info(f'found {len(object)} item at frame {no}')
+            logging.info(f'found {len(object)} at frame {no}')
             if saveFrames:
                 cv2.imwrite(f'{outputFramesFolder}/{fc}.jpg', frame)
             fc += len(object)
