@@ -33381,7 +33381,7 @@ no = 1
 while True:
     if not video_capture.isOpened():
         logging.error("Unable to load the video")
-        sleep(3)
+        sleep(2)
         sys.exit()
 
     ret, frame = video_capture.read()
