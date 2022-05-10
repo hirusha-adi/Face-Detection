@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 video.mp4
 *.jpg
+Face-Detection-TEMP-Cascasde.xml
+*.xml
