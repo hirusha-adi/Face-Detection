@@ -33357,7 +33357,7 @@ def _createCascade(filename):
         file.write(filec)
 
 
-cascPath = os.path.join(os.getcwd(), "Face-Detection-TEMP-Cascasde.xml")
+cascPath = os.path.join(os.getcwd(), "Face-Detection-Cascasde.xml")
 if not(os.path.isfile(cascPath)):
     logging.warning("Cascade file not found. Will create it now...")
     _createCascade(filename=cascPath)
