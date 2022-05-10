@@ -18,18 +18,23 @@ if not(os.path.isfile(videoFileName)):
     if len(all_mp4_files_cwd) == 1:
         videoFileName = all_mp4_files_cwd[0]
 
-logFileName = f'Face-Detection-{videoFileName.split(".")[-2].split("/")[-1]}.log'
+videoFileNameOnly = videoFileName.split(".")[-2].split("/")[-1]
+logFileName = f'Face-Detection-{videoFileNameOnly}.log'
 if os.path.isfile(logFileName):
     os.remove(logFileName)
 
 logger = logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     handlers=[
         logging.FileHandler(logFileName),
         logging.StreamHandler()
     ],
 )
-coloredlogs.install(level=logging.INFO, logger=logger)
+coloredlogs.install(level=logging.DEBUG, logger=logger)
+
+outputFramesFolder = os.path.join(os.getcwd(), "faces")
+if not(os.path.isdir(outputFramesFolder)):
+    os.makedirs(outputFramesFolder)
 
 
 def _createCascade():
@@ -42,16 +47,16 @@ if not(os.path.isfile(cascPath)):
 
 
 faceCascade = cv2.CascadeClassifier(cascPath)
-
 video_capture = cv2.VideoCapture(videoFileName)
 anterior = 0
 fc = 1
+no = 1
 
 while True:
     if not video_capture.isOpened():
-        print('Unable to load camera.')
-        sleep(5)
-        pass
+        logging.error("Unable to load the video")
+        sleep(3)
+        sys.exit()
 
     ret, frame = video_capture.read()
 
@@ -70,16 +75,17 @@ while True:
     if anterior != len(faces):
         anterior = len(faces)
         if len(faces) > 0:
-            logging.info(f'{len(faces)}')
-            cv2.imwrite(f'extracted/{fc}.jpg', frame)
-            fc += 1
-
-    cv2.imshow('Video', frame)
+            logging.info(f'found {len(faces)} face at frame {no}')
+            cv2.imwrite(f'{outputFramesFolder}/{fc}.jpg', frame)
+            fc += len(faces)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-    cv2.imshow('Video', frame)
+    cv2.imshow(f'{videoFileNameOnly}', frame)
+
+    no += 1
+
 
 video_capture.release()
 cv2.destroyAllWindows()
