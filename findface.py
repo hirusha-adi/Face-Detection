@@ -1,7 +1,8 @@
 import cv2
 import sys
 import os
-import logging as log
+import logging
+import coloredlogs
 import datetime as dt
 from time import sleep
 
@@ -17,7 +18,7 @@ if not(os.path.isfile(cascPath)):
 try:
     videoFileName = sys.argv[1]
 except IndexError:
-    videoFileName = os.path.join(os.getcwd(), "video.mp4")
+    videoFileName = "video.mp4"
 
 if not(os.path.isfile(videoFileName)):
     all_mp4_files_cwd = [x for x in os.listdir(
@@ -27,9 +28,16 @@ if not(os.path.isfile(videoFileName)):
 
 faceCascade = cv2.CascadeClassifier(cascPath)
 
-log.basicConfig(filename='Face-Detection-{}.log', level=log.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=[
+        logging.FileHandler(
+            f'Face-Detection-{videoFileName.split(".")[-2]}.log'),
+        logging.StreamHandler()
+    ]
+)
 
-video_capture = cv2.VideoCapture()
+video_capture = cv2.VideoCapture(videoFileName)
 anterior = 0
 fc = 1
 
@@ -52,12 +60,13 @@ while True:
     )
 
     for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 1.5)
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
     if anterior != len(faces):
         anterior = len(faces)
         if len(faces) > 0:
-            log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
+            logging.info("faces: "+str(len(faces)) +
+                         " at "+str(dt.datetime.now()))
             cv2.imwrite(f'extracted/{fc}.jpg', frame)
             fc += 1
 
