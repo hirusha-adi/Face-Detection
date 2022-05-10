@@ -14,7 +14,7 @@ except IndexError:
 
 if videoFileName.lower() == "help":
     print("""
-Easy Video Detection - vdetect
+Easy Object Detection - vdetect
 
 Usage -
     vdetect <video> <cascade> <save>
