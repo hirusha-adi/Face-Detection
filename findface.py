@@ -5,6 +5,11 @@ import logging as log
 import datetime as dt
 from time import sleep
 
+
+def _createCascade():
+    pass
+
+
 cascPath = os.path.join(os.getcwd(), "Face-Detection-TEMP-Cascasde.xml")
 if not(os.path.isfile(cascPath)):
     _createCascade()
@@ -12,10 +17,13 @@ if not(os.path.isfile(cascPath)):
 try:
     videoFileName = sys.argv[1]
 except IndexError:
-    videoFileName = "video.mp4"
+    videoFileName = os.path.join(os.getcwd(), "video.mp4")
 
 if not(os.path.isfile(videoFileName)):
-    pass
+    all_mp4_files_cwd = [x for x in os.listdir(
+        os.getcwd()) if x.endswith(".mp4")]
+    if len(all_mp4_files_cwd) == 1:
+        videoFileName = all_mp4_files_cwd[0]
 
 faceCascade = cv2.CascadeClassifier(cascPath)
 
